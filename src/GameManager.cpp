@@ -241,6 +241,14 @@ bool GameManager::getWon() const {
 	return m_won;
 }
 
+Grid GameManager::getGrid() const {
+	return m_grid;
+}
+
+Vec2D GameManager::getVec2D() const {
+	return Vec2D(m_grid);
+}
+
 void GameManager::display() const {
 	m_grid.display();
 }

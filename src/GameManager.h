@@ -9,6 +9,7 @@
 #include "./mm2048.h"
 #include "./Tile.h"
 #include "./Grid.h"
+#include "./Vec2D.h"
 
 
 
@@ -32,6 +33,9 @@ public:
 	bool isStuck() const;
 	bool isOver() const;
 	bool getWon() const;
+
+	Grid getGrid() const;
+	Vec2D getVec2D() const;
 
 	void display() const;
 

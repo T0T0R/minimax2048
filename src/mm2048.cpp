@@ -7,6 +7,7 @@
 #include "./mm2048.h"
 #include "./Tile.h"
 #include "./Grid.h"
+#include "./Vec2D.h"
 #include "./GameManager.h"
 
 
@@ -59,6 +60,8 @@ int main()
 	int input;
 
 	auto cases {3^9};
+
+
 
 
 	GameManager Game {rd, size};
