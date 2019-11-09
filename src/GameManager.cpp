@@ -10,7 +10,7 @@
 #include "./Grid.h"
 #include "./GameManager.h"
 
-GameManager::GameManager(std::default_random_engine rd, int const& size):
+GameManager::GameManager(std::default_random_engine rd, int size):
 	m_size(size), m_startTiles(2), m_grid (rd, m_size), m_score(0),
 	m_over(false), m_won(false), m_isStuck(false), m_keepPlaying(false),
 	m_rd(rd)
@@ -60,7 +60,7 @@ void GameManager::moveTile(Tile& tile, Position const& pos) {
 }
 
 // Move tiles on the grid in the specified direction
-void GameManager::move(int const& direction) {
+void GameManager::move(int direction) {
 
 	if (isGameTerminated()) return; // Don't do anything if the game's over
 
@@ -135,7 +135,7 @@ bool GameManager::isGameTerminated() const {
 	return m_over || (m_won && !m_keepPlaying);
 }
 
-Position GameManager::getVector(int const& direction) const {
+Position GameManager::getVector(int direction) const {
 	const std::map<int, Position> map {
 		{0 , Position {-1, 0}}, // Up
 		{1 , Position {0, 1}},  // Right

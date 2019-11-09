@@ -7,7 +7,7 @@
 #include "./Tile.h"
 #include "./Grid.h"
 
-Grid::Grid(std::default_random_engine const rd, int const& size):
+Grid::Grid(std::default_random_engine const rd, int size):
 	m_size(size), m_rd(rd)
 {
 	empty();
@@ -104,7 +104,7 @@ std::array<std::array<Tile, 4>, 4> Grid::getGrid() const {
 	return m_cells;
 }
 
-void Grid::setGrid(int const& x, int const& y, Tile& tile) {
+void Grid::setGrid(int x, int y, Tile& tile) {
 	m_cells[x][y] = tile;
 	m_cells[x][y].updatePosition(Position {x,y});
 }

@@ -12,7 +12,7 @@
 class Grid
 {
 public:
-	Grid(std::default_random_engine const rd, int const& size);
+	Grid(std::default_random_engine const rd, int size);
 	~Grid();
 
 	Position randomAvailableCell();
@@ -27,7 +27,7 @@ public:
 	void removeTile (Tile& tile);
 
 	std::array<std::array<Tile, 4>, 4> getGrid() const;
-	void setGrid(int const& x, int const& y, Tile& tile);
+	void setGrid(int x, int y, Tile& tile);
 	void setGrid(std::array<std::array<Tile, 4>, 4> const& grid);
 
 	void display() const;

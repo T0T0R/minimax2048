@@ -9,8 +9,8 @@ class Tile
 {
 public:
 	Tile();
-	Tile(int const& value);
-	Tile(Position const& position, int const& value);
+	Tile(int value);
+	Tile(Position const& position, int value);
 	~Tile();
 
 	int x() const;
@@ -20,12 +20,12 @@ public:
 
 	void updatePosition(Position const& position);
 
-	void setMerged(bool const& merged);
-	void setValue(int const& value);
+	void setMerged(bool merged);
+	void setValue(int value);
 
 	friend bool operator == (Tile const& tA, Tile const& tB);
-	friend bool operator == (Tile const& tA, int const& tB);
-	friend bool operator == (int const& tA, Tile const& tB);
+	friend bool operator == (Tile const& tA, int const tB);
+	friend bool operator == (int const tA, Tile const& tB);
 
 private:
 	int m_x;

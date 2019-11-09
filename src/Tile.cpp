@@ -8,11 +8,11 @@ Tile::Tile():
 	m_x(-1), m_y(-1), m_value(-1), m_justMerged(false)
 {}
 
-Tile::Tile(int const& value) :
+Tile::Tile(int value) :
 	m_x(-1), m_y(-1), m_value(value), m_justMerged(false) 
 {}
 
-Tile::Tile(Position const& position, int const& value):
+Tile::Tile(Position const& position, int value):
 	m_x(position.x), m_y(position.y), m_value(value), m_justMerged(false)
 {}
 
@@ -37,11 +37,11 @@ void Tile::updatePosition(Position const& position) {
 	m_y = position.y;
 }
 
-void Tile::setMerged(bool const& merged) {
+void Tile::setMerged(bool merged) {
 	m_justMerged = merged;
 }
 
-void Tile::setValue(int const& value) {
+void Tile::setValue(int value) {
 	m_value = value;
 }
 
@@ -53,10 +53,10 @@ bool operator == (Tile const& tA, Tile const& tB){
 	return tA.m_value==tB.m_value;
 }
 
-bool operator == (Tile const& tA, int const& tB) {
+bool operator == (Tile const& tA, int const tB) {
 	return tA.m_value==tB;
 }
 
-bool operator == (int const& tA, Tile const& tB) {
+bool operator == (int const tA, Tile const& tB) {
 	return tA==tB.m_value;
 }

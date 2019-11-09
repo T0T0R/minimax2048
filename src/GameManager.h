@@ -22,12 +22,12 @@ struct Traversal {
 class GameManager
 {
 public:
-	GameManager(std::default_random_engine rd, int const& size);
+	GameManager(std::default_random_engine rd, int size);
 	~GameManager();
 
 	void setup(std::default_random_engine rd);
 
-	void move(int const& direction);
+	void move(int direction);
 
 	bool isStuck() const;
 	bool isOver() const;
@@ -47,7 +47,7 @@ protected:
 
 	void moveTile(Tile& tile, Position const& pos);
 
-	Position getVector(int const& direction) const;
+	Position getVector(int direction) const;
 	Traversal buildTraversals(Position const& vector) const;
 	std::array<Position, 2> findFarthestPosition(Position cell, Position const& vector) const;
 	bool positionsEqual(Position const& first, Tile const& second) const;
