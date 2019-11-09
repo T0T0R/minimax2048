@@ -60,7 +60,7 @@ int main()
 
 	int input;
 
-	auto cases {3^9};
+	//auto cases {3^9};
 
 
 	GameManager Game {rd, size};

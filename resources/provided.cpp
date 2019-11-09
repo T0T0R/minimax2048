@@ -2,8 +2,6 @@
 #include <vector>
 #include <string>
 #include <array>
-#include <algorithm>
-#include <iterator>
 
 #include "../src/mm2048.h"
 #include "../src/GameManager.h"
@@ -14,6 +12,8 @@
 
 
 void display(Vec2D table) {
+	/***	Displays a VeC2D table	***/
+
 	for (auto line: table.getVec2D()) {
 		for (auto cell: line) {
 			std::cout<< cell << "\t";
@@ -24,6 +24,7 @@ void display(Vec2D table) {
 
 
 Vec2D rot90(Vec2D const& M){
+	/***	Clockwise rotation at 90 degrees	***/
 	Vec2D rotatedArray{};
 
 	for (unsigned int i{0}; i<4; i++){
