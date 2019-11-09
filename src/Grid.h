@@ -41,8 +41,8 @@ protected:
 
 
 private:
-	std::default_random_engine m_rd;
 	int m_size;
+	std::default_random_engine m_rd;
 	std::array<std::array<Tile,4>,4> m_cells;
 };
 
