@@ -11,17 +11,6 @@
 #include "./provided.h"
 
 
-void display(Vec2D table) {
-	/***	Displays a VeC2D table	***/
-
-	for (auto line: table.getVec2D()) {
-		for (auto cell: line) {
-			std::cout<< cell << "\t";
-		}
-		std::cout<<std::endl;
-	}
-}
-
 
 Vec2D rot90(Vec2D const& M){
 	/***	Clockwise rotation at 90 degrees	***/

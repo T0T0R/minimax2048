@@ -65,10 +65,11 @@ int main()
 	table.fill(line);
 
 	Vec2D myVec (table);
+	Vec2D id = Vec2D::eye();
 
-	display(myVec);
-	display(myVec+myVec);
-	display(myVec);
+	myVec.display();
+	(id/myVec).display();
+	myVec.display();
 
 
 	GameManager Game {rd, size};

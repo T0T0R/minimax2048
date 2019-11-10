@@ -40,8 +40,25 @@ Vec2D::Vec2D(std::array<std::array<int,4>,4> const& table):
 Vec2D::~Vec2D() {
 }
 
+Vec2D Vec2D::eye() {
+	std::array<int,4> line1 {1,0,0,0};
+	std::array<int, 4> line2 {0,1,0,0};
+	std::array<int, 4> line3 {0,0,1,0};
+	std::array<int, 4> line4 {0,0,0,1};
+	return Vec2D(std::array<std::array<int,4>,4> {line1, line2, line3, line4});
+}
+
 std::array<std::array<int,4>,4> & Vec2D::getVec2D() {
 	return m_table;
+}
+
+void Vec2D::display() const {
+	for (auto line: m_table) {
+		for (auto cell: line) {
+			std::cout<< cell << "\t";
+		}
+		std::cout<<std::endl;
+	}
 }
 
 std::array<int, 4> & Vec2D::operator[](unsigned int index) {
