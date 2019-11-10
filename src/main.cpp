@@ -60,7 +60,15 @@ int main()
 
 	int input;
 
-	//auto cases {3^9};
+	std::array<int,4> line {1,2,3,4};
+	std::array<std::array<int, 4>, 4> table;
+	table.fill(line);
+
+	Vec2D myVec (table);
+
+	display(myVec);
+	display(myVec+myVec);
+	display(myVec);
 
 
 	GameManager Game {rd, size};
