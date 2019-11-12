@@ -32,8 +32,8 @@ Vec2D glisse(Grid const& myGrid, std::string const& fleche){
 
 	Vec2D M {myGrid.getGrid()};
 
-	//	Fait pivoter la grille pour traiter les quatre cas de figure de façon identique.
-	//	La grille traitée sera pivotée dans le sens inverse après le glissement des tuiles.
+	//	Fait pivoter la grille pour traiter les quatre cas de figure de facon identique.
+	//	La grille traitee sera pivotee dans le sens inverse apres le glissement des tuiles.
     if (fleche == "g"){
         M = rot90(M);
     }else if (fleche == "h"){
@@ -48,7 +48,7 @@ Vec2D glisse(Grid const& myGrid, std::string const& fleche){
     for (unsigned int j{0}; j<4; ++j){
         for (unsigned int i{2}; i>0; --i){//	Position initiale (dans les trois lignes du haut)
 
-            if (M[i][j] != 0){	//Si il y a une tuile...
+            if (M[i][j] != 0){	//	Si il y a une tuile...
                 
 				scanner = i;
                 while (scanner < imax){	//	... on regarde s il y a une tuile compatible en dessous
@@ -120,7 +120,7 @@ bool isInside(std::vector<Vec2D> const& liste_coups, Vec2D const& coup){
 
 
 int fournir_coups(Grid const& myGrid, bool const& trait, std::vector<Vec2D> &liste_coups){
-    /*** Game est une matrice 4*4 contenant la valeur des tuiles, trait est vrai si le coup suivant
+    /*** myGrid est une matrice 4*4 contenant la valeur des tuiles, trait est vrai si le coup suivant
         consiste a glisser les tuiles, et faux si le coup suivant consiste a faire apparaitre
         un 2 ou un 4 sur la grille.
         La sortie est la liste de toutes les positions possibles apres ce coup ***/
