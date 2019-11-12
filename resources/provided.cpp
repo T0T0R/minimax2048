@@ -119,7 +119,7 @@ bool isInside(std::vector<Vec2D> const& liste_coups, Vec2D const& coup){
 }
 
 
-int fournir_coups(Grid const& myGrid, bool const& trait, std::vector<Vec2D> &liste_coups){
+std::vector<Vec2D> fournir_coups(Grid const& myGrid, bool const& trait){
     /*** myGrid est une matrice 4*4 contenant la valeur des tuiles, trait est vrai si le coup suivant
         consiste a glisser les tuiles, et faux si le coup suivant consiste a faire apparaitre
         un 2 ou un 4 sur la grille.
@@ -130,6 +130,7 @@ int fournir_coups(Grid const& myGrid, bool const& trait, std::vector<Vec2D> &lis
 	int note = fournir_note(grilleActuelle);
 
 	Vec2D coup {};	//	Construit une grille vierge tampon
+	std::vector<Vec2D> liste_coups;
 
 	std::array<std::string, 4> directions = {"g", "d", "h", "b"};
 	std::array<int, 2> valeursTuile = {2, 4};
@@ -168,5 +169,5 @@ int fournir_coups(Grid const& myGrid, bool const& trait, std::vector<Vec2D> &lis
         }
     }
 
-    return EXIT_SUCCESS;
+    return liste_coups;
 }
