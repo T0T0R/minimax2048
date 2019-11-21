@@ -26,11 +26,11 @@ Vec2D rot90(Vec2D const& M){
 }
 
 
-Vec2D glisse(Grid const& position, std::string const& fleche){
+Vec2D glisse(Vec2D const& position, std::string const& fleche){
     /*** fleche est une lettre indiquant dans quelle direction les tuiles
         doivent etre glissees ***/
 
-	Vec2D M {position.getGrid()};
+	Vec2D M = position;
 
 	//	Fait pivoter la grille pour traiter les quatre cas de figure de facon identique.
 	//	La grille traitee sera pivotee dans le sens inverse apres le glissement des tuiles.
@@ -105,13 +105,13 @@ bool isInside(std::vector<Vec2D> const& liste_coups, Vec2D const& coup){
 }
 
 
-std::vector<Vec2D> fournir_coups(Grid const& position, bool const& trait){
+std::vector<Vec2D> fournir_coups(Vec2D const& position, bool const& trait){
     /*** position est une matrice 4*4 contenant la valeur des tuiles, trait est vrai si le coup suivant
         consiste a glisser les tuiles, et faux si le coup suivant consiste a faire apparaitre
         un 2 ou un 4 sur la grille.
         La sortie est la liste de toutes les positions possibles apres ce coup ***/
 
-	Vec2D grilleActuelle { position.getGrid() };
+	Vec2D grilleActuelle = position;
 
 	std::vector<Vec2D> liste_coups;
 	Vec2D coup {};	//	Construit une grille vierge tampon
