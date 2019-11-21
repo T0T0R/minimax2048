@@ -26,11 +26,11 @@ Vec2D rot90(Vec2D const& M){
 }
 
 
-Vec2D glisse(Grid const& myGrid, std::string const& fleche){
+Vec2D glisse(Grid const& position, std::string const& fleche){
     /*** fleche est une lettre indiquant dans quelle direction les tuiles
         doivent etre glissees ***/
 
-	Vec2D M {myGrid.getGrid()};
+	Vec2D M {position.getGrid()};
 
 	//	Fait pivoter la grille pour traiter les quatre cas de figure de facon identique.
 	//	La grille traitee sera pivotee dans le sens inverse apres le glissement des tuiles.
@@ -91,52 +91,36 @@ int fournir_note(Vec2D table){
 
 
 bool isInside(std::vector<Vec2D> const& liste_coups, Vec2D const& coup){
-	int tuiles_identiques {0};
 	bool output {false};
 
 	for (Vec2D coup_present : liste_coups){
-	
-		tuiles_identiques = 0;
 
-		for (int i = 0; i < 4; i++) {
-			for  (int j = 0; j < 4; j++) {
-
-				if(coup_present[i][j]==coup[i][j]){
-					tuiles_identiques++;
-				}
-
-			}
-		}
-
-		if (tuiles_identiques==16){
+		if (coup_present==coup){
 			output = true;
 			break;
 		}
-	
-	}	
 
+	}	
 	return output;
 }
 
 
-std::vector<Vec2D> fournir_coups(Grid const& myGrid, bool const& trait){
-    /*** myGrid est une matrice 4*4 contenant la valeur des tuiles, trait est vrai si le coup suivant
+std::vector<Vec2D> fournir_coups(Grid const& position, bool const& trait){
+    /*** position est une matrice 4*4 contenant la valeur des tuiles, trait est vrai si le coup suivant
         consiste a glisser les tuiles, et faux si le coup suivant consiste a faire apparaitre
         un 2 ou un 4 sur la grille.
         La sortie est la liste de toutes les positions possibles apres ce coup ***/
 
-	Vec2D grilleActuelle { myGrid.getGrid() };
+	Vec2D grilleActuelle { position.getGrid() };
 
-	int note = fournir_note(grilleActuelle);
-
-	Vec2D coup {};	//	Construit une grille vierge tampon
 	std::vector<Vec2D> liste_coups;
+	Vec2D coup {};	//	Construit une grille vierge tampon
 
 	std::array<std::string, 4> directions = {"g", "d", "h", "b"};
 	std::array<int, 2> valeursTuile = {2, 4};
 
 
-    if (note != -1){
+    if (fournir_note(grilleActuelle) != -1){
         if (trait){ //	Si on glisse les tuiles
 
 
@@ -144,7 +128,7 @@ std::vector<Vec2D> fournir_coups(Grid const& myGrid, bool const& trait){
 				//	On glisse les tuiles dans les quatre sens, et on stocke les quatre 
 				//	grilles obtenues
 
-                coup = glisse(myGrid,fleche);
+                coup = glisse(position,fleche);
 
 				if ( !isInside(liste_coups, coup)){
 					liste_coups.push_back(coup);
