@@ -10,6 +10,7 @@
 #include "./Grid.h"
 #include "./Vec2D.h"
 #include "./GameManager.h"
+#include "./minimax.h"
 
 
 int main()
