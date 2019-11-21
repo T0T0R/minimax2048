@@ -1,0 +1,277 @@
+\documentclass[a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{lmodern} %fonte latin modern
+\usepackage{soul} % Barrer un mot \st{}
+\usepackage{xcolor}
+\usepackage{xspace}% gère les espaces de \of et \fg
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amssymb,amsmath,amsfonts,amsxtra,amsthm}
+\usepackage{mathrsfs} % Intégrales
+\usepackage{stackrel} % \stackrel[k_2]{k_1}{\rightleftarrows}
+\usepackage{esint} % various fancy integral symbols
+\usepackage{stmaryrd} % Intervalles discrets |[ ]| avec \llbracket \rrbracket 
+\usepackage{booktabs} % Pour les tableau : Allows the use of \toprule, \midrule and \bottomrule in tables for horizontal lines
+\usepackage{physics}
+\usepackage{chemist}
+\usepackage{chemmacros} %https://la-bibliotex.fr/2019/02/02/ecrire-la-chimie-avec-latex/
+\chemsetup{modules=all}
+\chemsetup[phases]{pos=sub}
+\chemsetup[acid-base]{p-style=slanted}
+\usepackage{chemfig} %Dessiner molécules
+\usepackage{modiagram} %Molecular diagrams
+\usepackage{float} % Pour le placement absolu des figures avec l'option [H]
+\usepackage{listings} % Pour le code
+\usepackage{subfigure}
+\usepackage{url}
+\usepackage[top=2cm, bottom=2cm, left=1cm, right=1cm]{geometry}
+\usepackage{tikz,tkz-tab}
+\usepackage{setspace}
+
+
+\newcommand*{\Coord}[3]{%Pour donner les coordonnées d'un vecteur : \Coord{u}{X}{Y} 
+  \ensuremath{\overrightarrow{#1}\, 
+    \begin{pmatrix} 
+      #2\\ 
+      #3 
+    \end{pmatrix}}}
+
+\newcommand*{\E}{%Donne le symbole de l'énergie E rond
+	\mathcal{E} 
+}
+
+\newcommand\angstrom{\mbox{\normalfont\AA}}
+
+\newcommand\namebond[4][5pt]{\chemmove{\path(#2)--(#3)node[midway,sloped,yshift=#1]{#4};}}
+
+\newcommand\arcbetweennodes[3]{%
+	\pgfmathanglebetweenpoints{\pgfpointanchor{#1}{center}}{\pgfpointanchor{#2}{center}}%
+	\let#3\pgfmathresult
+}
+
+\newcommand\arclabel[6][stealth-stealth,shorten <=1pt,shorten >=1pt]{% Trace et nomme des angles {rayon,depart,arrivee,centre,text}
+	\chemmove{%
+		\arcbetweennodes{#4}{#3}\anglestart \arcbetweennodes{#4}{#5}\angleend
+		\draw[#1]([shift=(\anglestart:#2)]#4)arc(\anglestart:\angleend:#2);
+		\pgfmathparse{(\anglestart+\angleend)/2}\let\anglestart\pgfmathresult
+		\node[shift=(\anglestart:#2+1pt)#4,anchor=\anglestart+180,rotate=\anglestart+90,inner sep=0pt,
+			outer sep=0pt]at(#4){#6};
+	}
+}
+
+\title{\bsc{Data Sciences} - Rapport de projet :\\ IA : Algorithme MinMax appliqué au 2048}
+\author{\bsc{Langlard} Arthur, \bsc{Marcone} Jules}
+\date{\today}
+
+
+
+\begin{document}
+\lstdefinestyle{customc}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=L,
+  xleftmargin=\parindent,
+  language=C++,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+\lstdefinestyle{matlab}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=L,
+  xleftmargin=\parindent,
+  language=matlab,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+
+
+
+
+\maketitle
+
+\chapter{Code fourni}
+On nous a fourni les fonctions \verb|fournir_coups|, \verb|glisse|, \verb|afficher_position| et \verb|pressee|.
+Le jeu 2048 est open-source, ce qui nous a permis d'adapter son code en C++ et en Matlab.
+
+\section{Fonctions fournies}
+\subsection{fournir\_coups}
+\verb|fournir_coups| est une fonction ayant pour paramètres : 
+\begin{itemize}
+\item \verb|position| : Un objet contenant l'état de la partie sous la forme d'une grille de 4$\times$4 cellule,
+\item \verb|trait| : \emph{Vrai} si le prochain coup à évaluer est un déplacement des tuiles, \emph{faux} si le prochain coup à évaluer est l'insertion d'une tuile 2 ou 4.
+\end{itemize}
+Cette fonction retourne \verb|liste_coups|, un tableau de grilles correspondant à toutes les grilles qu'il est possible d'obtenir à partir de la situation décrite par l'objet \verb|position| et suivant la valeur de \verb|trait|.
+
+\paragraph{Matlab}
+\lstinputlisting[style=matlab, caption={fournir\_coups.m}]{./resources/fournir_coups.m}
+\begin{enumerate}
+\item Le tableau \verb|liste_coups| est initialisé,
+\item on vérifie que la note attribuée à la grille actuelle \verb|position.M| soit positive,
+\item dans le cas d'un déplacement des tuiles, on stocke successivement dans \verb|liste_coups| chacune des quatre grilles possibles après un déplacement vers la gauche, la droite, le haut, le bas, en vérifiant qu'elle ne soit pas déjà présente dans le tableau,
+\item dans le cas d'une insertion de tuile, chaque case vide de la grille actuelle est évaluée, en la remplaçant par un 2 ou un 4. Les grilles obtenues sont ajoutées à \verb|liste_coups|.
+\item Finalement, le tableau de grilles possibles \verb|liste_coups| est mélangé puis retourné.
+\end{enumerate}
+
+\paragraph{C++}
+\lstinputlisting[style=customc, caption={Extrait de provided.cpp}]{./resources/fournir_coups.cpp}
+\begin{enumerate}
+\item La grille correspondant à la position initiale est stockée dans \verb|grilleActuelle|,
+\item Le tableau \verb|liste_coups| est initialisé,
+\item on vérifie que la note attribuée à la grille actuelle \verb|grilleActuelle| soit positive,
+\item les différents mouvements sont stockés dans \verb|directions| et les valeurs possibles d'une tuile insérée sont stockées dans \verb|valeursTuile|,
+\item dans le cas d'un déplacement des tuiles, on stocke successivement dans \verb|liste_coups| chacune des quatre grilles possibles après un déplacement en vérifiant qu'elle ne soit pas déjà présente dans le tableau,
+\item dans le cas d'une insertion de tuile, chaque case vide de la grille actuelle est évaluée parmi ses valeurs possibles. Les grilles obtenues sont ajoutées à \verb|liste_coups|.
+\item Finalement, le tableau de grilles possibles \verb|liste_coups| est retourné.
+\end{enumerate}
+
+\paragraph{}On a également défini une fonction \verb|isInside| avec pour paramètres le tableau \verb|liste_coups| et la grille à rechercher dedans \verb|coup|.
+\begin{enumerate}
+\item La sortie \verb|output| est initialisée à \emph{false} par défaut.
+\item On regarde chaque élément de \verb|lise_coups|,
+\item si cet élément est identique à \verb|coup|, la variable \verb|output| est passée à \emph{true} et on sort de la boucle.
+\item La fonction retourne \verb|output|. 
+\end{enumerate}
+
+
+
+
+\subsection{glisse}
+\verb|glisse| est une fonction ayant pour paramètres : 
+\begin{itemize}
+\item \verb|position| : Un objet contenant l'état de la partie sous la forme d'une grille de 4$\times$4 cellules,
+\item \verb|fleche| : Une chaîne de caractère indiquant la direction de glissement des tuiles (g,d,h,b)
+\end{itemize}
+Cette fonction retourne \verb|position|, l'objet contenant l'état de la partie sous la forme d'une grille une fois le glissement effectué dans la direction de \verb|fleche|. En C++, on retournera simplement la matrice représentant la grille plutôt que l'objet contenant cette grille.
+
+\paragraph{Matlab}
+\lstinputlisting[style=matlab, caption={glisse.m}]{./resources/glisse.m}
+\begin{enumerate}
+\item La matrice \verb|M| représentant le plateau de la partie est récupérée,
+\item suivant la valeur de \verb|fleche|, la matrice \verb|M| est temporairement pivotée pour pouvoir appliquer le même algorithme de glissement (vers le bas) des tuiles, quelque soit la direction de ce glissement.
+\item La dernière ligne ne peut pas être plus glissée vers le bas, on ne s'intéresse donc qu'aux lignes \verb|i|$\in\llbracket1;3\rrbracket$. Plus précisément, la priorité de la combinaison de deux tuiles se fait avec d'abord la tuile la plus basse, puis celle au dessus, etc. Donc en réalité, \verb|i| varie dans le sens \verb|i|$\in\llbracket3;1\rrbracket$ (en remontant).
+\item La possibilité d'une combinaison est évaluée en observant si à la ligne \verb|i| il y a une case non-vide, et si en-dessous (à la ligne \verb|ii|) il y a une case contenant la même valeur. Si c'est le cas, les deux tuiles sont combinées, sinon la tuile en \verb|i| est simplement déplacée au-dessus de \verb|ii|.
+\item On répète l'algorithme pour les \verb|j|$\in\llbracket1;4\rrbracket$ colonnes de \verb|M| pivotée.
+\item La matrice \verb|M| est remise dans sa position initiale, puis \verb|position| est mis à jour avec \verb|M| et est retourné.
+\end{enumerate}
+
+\paragraph{C++}
+\lstinputlisting[style=customc, caption={Extrait de provided.cpp}]{./resources/glisse.cpp}
+\begin{enumerate}
+\item La matrice \verb|M| représentant le plateau de la partie est récupérée,
+\item suivant la valeur de \verb|fleche|, la matrice \verb|M| est temporairement pivotée pour pouvoir appliquer le même algorithme de glissement (vers le bas) des tuiles, quelque soit la direction de ce glissement.
+\item La dernière ligne ne peut pas être plus glissée vers le bas, on ne s'intéresse donc qu'aux lignes \verb|i|$\in\llbracket0;2\rrbracket$. Plus précisément, la priorité de la combinaison de deux tuiles se fait avec d'abord la tuile la plus basse, puis celle au dessus, etc. Donc en réalité, \verb|i| varie dans le sens \verb|i|$\in\llbracket2;0\rrbracket$ (en remontant).
+\item La possibilité d'une combinaison est évaluée en observant si à la ligne \verb|i| il y a une case non-vide, et si en-dessous (à la ligne \verb|scanner|) il y a une case contenant la même valeur. Si c'est le cas, les deux tuiles sont combinées, sinon la tuile en \verb|i| est simplement déplacée au-dessus de \verb|scanner|.
+\item On répète l'algorithme pour les \verb|j|$\in\llbracket0;3\rrbracket$ colonnes de \verb|M| pivotée.
+\item La matrice \verb|M| est remise dans sa position initiale puis est retournée.
+\end{enumerate}
+
+
+
+\subsection{afficher\_position}
+\verb|afficher_position| est une fonction ayant pour paramètre \verb|position|, un objet contenant l'état de la partie sous la forme d'une grille de 4$\times$4 cellules.
+
+Cette fonction permet d'afficher à l'utilisateur la partie.
+
+\paragraph{Matlab}
+\lstinputlisting[style=matlab, caption={afficher\_position.m}]{./resources/afficher_position.m}
+\begin{enumerate}
+\item La matrice \verb|M| représentant l'état de la partie est récupérée de \verb|position|.
+\item Une table associative \verb|Coul| permettant d'attribuer à chaque valeur de tuile rencontrée une couleur au format RGB est définie.
+\item Un rectangle délimitant l'espace de jeu et tracé,
+\item puis pour chaque case de \verb|M|, sa valeur \verb|n| est écrite à sa position dans un petit rectangle de couleur définie dans \verb|Coul|.
+\item Enfin, la figure est affichée
+\end{enumerate}
+
+
+\subsection{pressee}
+\verb|pressee| est une fonction permettant au programme d'écouter l'entrée clavier. Elle retourne une chaîne de caractère correspondant à la touche pressée par l'utilisateur.
+
+\paragraph{Matlab}
+\lstinputlisting[style=matlab, caption={pressee.m}]{./resources/pressee.m}
+\begin{enumerate}
+\item Une chaîne de caractères vide \verb|fleche| est initialisée,
+\item puis le clavier de l'utilisateur est écouté, et la valeur ASCII de la touche pressée est stockée dans \verb|value|.
+\item Si la touche pressée correspond à une des touches de direction ou la touche s, le caractère correspondant est stocké dans \verb|fleche| (respectivement g,d,h,b,s).
+\item La boucle recommence si \verb|fleche| est vide, sinon \verb|fleche| est renvoyée par la fonction.
+\end{enumerate}
+
+
+\section{Sources de 2048}
+Le dépôt officiel des sources du jeu 2048 est \url{https://github.com/gabrielecirulli/2048} sous licence MIT.
+
+Les fichiers constituant le noyau du jeu sont \verb|game_manager.js|, \verb|grid.js| et \verb|tile.js|.
+
+\subsection{GameManager}
+\paragraph{C++}
+\lstinputlisting[style=customc, caption={GameManager.cpp}]{./src/GameManager.cpp}
+\lstinputlisting[style=customc, caption={GameManager.h}]{./src/GameManager.h}
+
+
+\subsection{Grid}
+\paragraph{C++}
+\lstinputlisting[style=customc, caption={Grid.cpp}]{./src/Grid.cpp}
+\lstinputlisting[style=customc, caption={Grid.h}]{./src/Grid.h}
+
+
+\subsection{Tile}
+\paragraph{C++}
+\lstinputlisting[style=customc, caption={Tile.cpp}]{./src/Tile.cpp}
+\lstinputlisting[style=customc, caption={Tile.h}]{./src/Tile.h}
+
+
+
+\chapter{Code ajouté}
+\section{Fichier principal - mm2048}
+\subsection{C++}
+On définit une structure \verb|Position| qui représente un couple d'entiers $(x,y)$ modifiables.
+
+\lstinputlisting[style=customc, caption={main.cpp}]{./src/main.cpp}
+\lstinputlisting[style=customc, caption={mm2048.h}]{./src/mm2048.h}
+
+\section{Vec2D}
+La classe \verb|Vec2D| a été ajoutée en C++ pour permettre de représenter facilement une matrice 4$\times$4 de manière unique. C'est cet objet qui est utilisé dans les fonctions \verb|fournir_coups| et \verb|glisse|. Il inclut une conversion explicite depuis un objet \verb|Grid| ainsi que depuis des tableaux 4$\times$4 de \verb|int| ou de \verb|Tile|.
+
+Il s'agit formellement d'un objet \verb|std::array<std::array<int,4>,4>|.
+
+Plusieurs opérateurs sont surchargés:
+\begin{itemize}
+\item == : Permet la comparaison de deux matrices (A==B)
+\item + : Permet l'addition de deux matrices (A+B)
+\item * : Permet la multiplication d'une matrice par un coefficient (k*A ou A*k)
+\item / : Permet le produit matriciel de deux matrices (A/B)
+\end{itemize}
+
+Il existe la méthode \verb|eye| pour générer une matrice identité 4$\times$4.
+
+\lstinputlisting[style=customc, caption={Vec2D.cpp}]{./src/Vec2D.cpp}
+\lstinputlisting[style=customc, caption={Vec2D.h}]{./src/Vec2D.h}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\tableofcontents
+\lstlistoflistings
+\end{document}
