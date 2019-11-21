@@ -84,6 +84,6 @@ bool operator==(Vec2D const & vecA, Vec2D const & vecB) {
 }
 
 Vec2D operator+(Vec2D vA, Vec2D const& vB){
-	vA += vB; // reuse compound assignment
-	return vA; // return the result by value (uses move constructor)
+	vA += vB; // reuse compound assignment.
+	return vA; // return the result by value (uses move constructor).
 }

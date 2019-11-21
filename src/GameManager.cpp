@@ -29,11 +29,11 @@ void GameManager::setup(std::default_random_engine rd) {
 	m_isStuck = false;
 	m_keepPlaying = false;
 
-	// Add the initial tiles
+	// Add the initial tiles.
 	addStartTiles();
 }
 
-// Set up the initial tiles to start the game with
+// Set up the initial tiles to start the game with.
 void GameManager::addStartTiles() {
 	for (int i = 0; i < m_startTiles; i++) {
 		addRandomTile();
@@ -51,7 +51,7 @@ void GameManager::addRandomTile() {
 	}
 }
 
-// Move a tile and its representation
+// Move a tile and its representation.
 void GameManager::moveTile(Tile& tile, Position const& pos) {
 	Tile empty (0);
 
@@ -59,10 +59,10 @@ void GameManager::moveTile(Tile& tile, Position const& pos) {
 	m_grid.setGrid(pos.x, pos.y, tile);
 }
 
-// Move tiles on the grid in the specified direction
+// Move tiles on the grid in the specified direction.
 void GameManager::move(int direction) {
 
-	if (isGameTerminated()) return; // Don't do anything if the game's over
+	if (isGameTerminated()) return; // Don't do anything if the game's over.
 
 	Position cell;
 	Tile tile;
@@ -72,20 +72,20 @@ void GameManager::move(int direction) {
 	Traversal traversals = buildTraversals(vector);
 	bool moved = false;
 
-	// Save the current tile positions and remove merger information
+	// Save the current tile positions and remove merger information.
 	m_grid.prepareTiles();
 
-	// Traverse the grid in the right direction and move tiles	
+	// Traverse the grid in the right direction and move tiles.
 	for (int x: traversals.x){
 		for (int y : traversals.y) {
 			cell = Position {x,y};
 			tile = m_grid.cellContent(cell);
 
-			if (tile.getValue()>0) {	// If there is a tile here at (x,y)
+			if (tile.getValue()>0) {	// If there is a tile here at (x,y),
 				positions = findFarthestPosition(cell, vector);
 				Tile next = m_grid.cellContent(positions[1]);
 
-				// Only one merger per row traversal?
+				// Only one merger per row traversal ?
 				if (next.getValue()>0 &&
 						next.getValue() == tile.getValue() &&
 						!next.didMerged() ) {
@@ -97,13 +97,13 @@ void GameManager::move(int direction) {
 					m_grid.insertTile(merged);
 					m_grid.removeTile(tile);
 
-					// Converge the two tiles' positions
+					// Converge the two tiles' positions.
 					tile.updatePosition(positions[1]);
 
-					// Update the score
+					// Update the score.
 					m_score += merged.getValue();
 
-					// The mighty 2048 tile
+					// The mighty 2048 tile.
 					if (merged.getValue() == 2048) {m_won = true;}
 
 					moved = true; // The tile moved from its original cell !

@@ -16,7 +16,7 @@ Grid::Grid(std::default_random_engine const rd, int size):
 Grid::~Grid() {
 }
 
-// Build a grid of the specified size
+// Build a grid of the specified size.
 std::array<std::array<Tile, 4>, 4> Grid::empty() {
 	std::array<Tile, 4> emptyLine {Tile (0),Tile (0),Tile (0),Tile (0)};
 	m_cells = {emptyLine,emptyLine,emptyLine,emptyLine};
@@ -30,7 +30,7 @@ std::array<std::array<Tile, 4>, 4> Grid::empty() {
 	return m_cells;
 }
 
-// Find the first available random position
+// Find the first available random position.
 Position Grid::randomAvailableCell(){
 	std::vector<Position> cells {availableCells()};
 
@@ -54,13 +54,13 @@ std::vector<Position> Grid::availableCells() const {
 	return cells;
 }
 
-// Check if there are any cells available
+// Check if there are any cells available.
 bool Grid::cellsAvailable() const{
 	if (availableCells().size()==0){return false;}
 	else {return true;}
 }
 
-// Check if the specified cell is taken
+// Check if the specified cell is taken.
 bool Grid::cellAvailable(Position const& pos) const{
 	return !cellOccupied(pos);
 }
@@ -82,7 +82,7 @@ bool Grid::withinBounds(Position const& position) const {
 		&& (position.y >= 0) && (position.y < m_size);
 }
 
-// Save all tile positions and remove merger info
+// Save all tile positions and remove merger info.
 void Grid::prepareTiles() {
 	for (auto& cellLine: m_cells) {
 		for (auto& tile: cellLine) {
@@ -91,7 +91,7 @@ void Grid::prepareTiles() {
 	}
 }
 
-// Inserts a tile at its position
+// Inserts a tile at its position.
 void Grid::insertTile(Tile& tile) {
 	m_cells[tile.x()][tile.y()] = tile;
 }

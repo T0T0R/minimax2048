@@ -13,7 +13,7 @@
 
 
 Vec2D rot90(Vec2D const& M){
-	/***	Clockwise rotation at 90 degrees	***/
+	/***	Clockwise rotation at 90 degrees.	***/
 	Vec2D rotatedArray{};
 
 	for (unsigned int i{0}; i<4; i++){
@@ -28,7 +28,7 @@ Vec2D rot90(Vec2D const& M){
 
 Vec2D glisse(Vec2D const& position, std::string const& fleche){
     /*** fleche est une lettre indiquant dans quelle direction les tuiles
-        doivent etre glissees ***/
+        doivent etre glissees. ***/
 
 	Vec2D M = position;
 
@@ -46,20 +46,20 @@ Vec2D glisse(Vec2D const& position, std::string const& fleche){
     int scanner;
 
     for (unsigned int j{0}; j<4; ++j){
-        for (unsigned int i{2}; i>0; --i){//	Position initiale (dans les trois lignes du haut)
+        for (unsigned int i{2}; i>0; --i){//	Position initiale (dans les trois lignes du haut).
 
-            if (M[i][j] != 0){	//	Si il y a une tuile...
+            if (M[i][j] != 0){	//	Si il y a une tuile?
                 
 				scanner = i;
-                while (scanner < imax){	//	... on regarde s il y a une tuile compatible en dessous
+                while (scanner < imax){	//	on regarde s il y a une tuile compatible en dessous.
 					++ scanner;
 
-                    if ( M[scanner][j] == M[scanner-1][j] ){	//	Si on trouve une tuile identique, on les combine
+                    if ( M[scanner][j] == M[scanner-1][j] ){	//	Si on trouve une tuile identique, on les combine.
 						M[scanner][j] = M[scanner][j]*2;
 						M[scanner-1][j] = 0;
                         imax = scanner - 1;
 
-                    }else if ( M[scanner][j] == 0 ){	//	Si il n y a pas de tuile en dessous, on la deplace
+                    }else if ( M[scanner][j] == 0 ){	//	Si il n y a pas de tuile en dessous, on la deplace.
 						M[scanner][j] = M[scanner-1][j];
 						M[scanner-1][j] = 0;
 
@@ -72,7 +72,7 @@ Vec2D glisse(Vec2D const& position, std::string const& fleche){
     }
 
 
-	//	La grille est remise en position initiale
+	//	La grille est remise en position initiale.
     if(fleche == "g"){
         M = rot90(rot90(rot90(M)));
     }else if (fleche == "h"){
@@ -109,24 +109,24 @@ std::vector<Vec2D> fournir_coups(Vec2D const& position, bool const& trait){
     /*** position est une matrice 4*4 contenant la valeur des tuiles, trait est vrai si le coup suivant
         consiste a glisser les tuiles, et faux si le coup suivant consiste a faire apparaitre
         un 2 ou un 4 sur la grille.
-        La sortie est la liste de toutes les positions possibles apres ce coup ***/
+        La sortie est la liste de toutes les positions possibles apres ce coup. ***/
 
 	Vec2D grilleActuelle = position;
 
 	std::vector<Vec2D> liste_coups;
-	Vec2D coup {};	//	Construit une grille vierge tampon
+	Vec2D coup {};	//	Construit une grille vierge tampon.
 
 	std::array<std::string, 4> directions = {"g", "d", "h", "b"};
 	std::array<int, 2> valeursTuile = {2, 4};
 
 
     if (fournir_note(grilleActuelle) != -1){
-        if (trait){ //	Si on glisse les tuiles
+        if (trait){ //	Si on glisse les tuiles,
 
 
 			for (std::string fleche : directions){
 				//	On glisse les tuiles dans les quatre sens, et on stocke les quatre 
-				//	grilles obtenues
+				//	grilles obtenues.
 
                 coup = glisse(position,fleche);
 
@@ -135,18 +135,18 @@ std::vector<Vec2D> fournir_coups(Vec2D const& position, bool const& trait){
 				}
             }
 
-        } else {	//	Si la tuile 2 ou 4 apparait
+        } else {	//	Si la tuile 2 ou 4 apparait,
             for (int i {0}; i<4; ++i){
                 for (int j {1}; j<4; ++j){
 					if (grilleActuelle[i][j] == 0){
                         for (int n : valeursTuile){
-							//	On construit une grille avec la tuile supplementaire et on la stocke
+							//	On construit une grille avec la tuile supplementaire et on la stocke.
 
                             grilleActuelle[i][j] = n;
                             liste_coups.push_back(grilleActuelle);
                         }
 
-						grilleActuelle[i][j] = 0;	//	On remet la grille dans son etat initial
+						grilleActuelle[i][j] = 0;	//	On remet la grille dans son etat initial.
                     }
                 }
             }

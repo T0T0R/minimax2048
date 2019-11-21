@@ -32,6 +32,6 @@ private:
 	int m_y;
 	int m_value;
 
-	bool m_justMerged; // Tracks tiles that merged together
+	bool m_justMerged; // Tracks tiles that merged together.
 };
 

@@ -45,7 +45,7 @@ public:
 		}
 		template <typename Tmatrix>
 	friend Vec2D operator / (Tmatrix const& mA, Tmatrix const& mB) {
-		//	matrix product
+		//	matrix product.
 		Vec2D output;
 		auto sum {0};
 		int a {0};
@@ -67,7 +67,7 @@ public:
 	}
 
 private:
-	//4*4 grid containing the numbers :
+	// 4*4 grid containing the numbers :
 	std::array<std::array<int,4>,4> m_table;
 	unsigned int m_size;
 };

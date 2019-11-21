@@ -15,7 +15,7 @@
 int main()
 {	
 	unsigned int const seed = static_cast<unsigned int>(std::time(nullptr));
-	std::default_random_engine rd {seed};	//Pseudo-random number generator
+	std::default_random_engine rd {seed};	//Pseudo-random number generator.
 
 	int size {4};
 
