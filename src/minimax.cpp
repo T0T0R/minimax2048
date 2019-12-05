@@ -18,10 +18,10 @@ int minimax(Vec2D const& grid, int depth, bool isPlayer){
 
     } else {    // Recursive case.
 
-        std::vector<Vec2D> possibleMoves = fournir_coups(grid, isPlayer);
+        std::vector<std::pair<Vec2D,std::string>> possibleMoves = fournir_coups(grid, isPlayer);
 
-        for (Vec2D child: possibleMoves){   // Stores all marks for child grids.
-                marks.push_back( minimax( child, depth-1, !isPlayer ));
+        for (std::pair<Vec2D,std::string> child: possibleMoves){   // Stores all marks for child grids.
+                marks.push_back( minimax( child.first, depth-1, !isPlayer ));
         }
 
 
@@ -37,6 +37,7 @@ int minimax(Vec2D const& grid, int depth, bool isPlayer){
 
 
 int note(Vec2D const& grid){
+    return grid[0][0];
     /* Returns the mark corresponding to the given grid. */
     /// Sum of :
     //  - Sum of all tiles,
@@ -44,5 +45,5 @@ int note(Vec2D const& grid){
     //  - Bonus : if both highest tile and second to highest tile are next to each other,
     //  - Bonus : value/tile (favor |0|1024| against |512|512|)
 
-    return EXIT_SUCCESS;
+    //return EXIT_SUCCESS;
 }

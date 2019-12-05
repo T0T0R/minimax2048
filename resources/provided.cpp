@@ -42,7 +42,7 @@ Vec2D glisse(Vec2D const& position, std::string const& fleche){
         M = rot90(rot90(rot90(M)));
     }
 
-	int imax{4};
+	int imax{3};
     int scanner;
 
     for (unsigned int j{0}; j<4; ++j){
@@ -90,12 +90,12 @@ int fournir_note(Vec2D table){
 }
 
 
-bool isInside(std::vector<Vec2D> const& liste_coups, Vec2D const& coup){
+bool isInside(std::vector<std::pair<Vec2D, std::string>> const& liste_coups, Vec2D const& coup){
 	bool output {false};
 
-	for (Vec2D coup_present : liste_coups){
+	for (std::pair<Vec2D, std::string> coup_present : liste_coups){
 
-		if (coup_present==coup){
+		if (coup_present.first==coup){
 			output = true;
 			break;
 		}
@@ -105,15 +105,16 @@ bool isInside(std::vector<Vec2D> const& liste_coups, Vec2D const& coup){
 }
 
 
-std::vector<Vec2D> fournir_coups(Vec2D const& position, bool const& trait){
+std::vector<std::pair<Vec2D, std::string>> fournir_coups(Vec2D const& position, bool const& trait){
     /*** position est une matrice 4*4 contenant la valeur des tuiles, trait est vrai si le coup suivant
         consiste a glisser les tuiles, et faux si le coup suivant consiste a faire apparaitre
         un 2 ou un 4 sur la grille.
-        La sortie est la liste de toutes les positions possibles apres ce coup. ***/
+        La sortie est la liste de toutes les positions possibles apres ce coup, associees a la direction
+        qui a engendre ce coup. ***/
 
 	Vec2D grilleActuelle = position;
 
-	std::vector<Vec2D> liste_coups;
+	std::vector<std::pair<Vec2D,std::string>> liste_coups;
 	Vec2D coup {};	//	Construit une grille vierge tampon.
 
 	std::array<std::string, 4> directions = {"g", "d", "h", "b"};
@@ -131,7 +132,7 @@ std::vector<Vec2D> fournir_coups(Vec2D const& position, bool const& trait){
                 coup = glisse(position,fleche);
 
 				if ( !isInside(liste_coups, coup)){
-					liste_coups.push_back(coup);
+					liste_coups.push_back(std::pair<Vec2D, std::string>(coup, fleche));
 				}
             }
 
@@ -143,7 +144,7 @@ std::vector<Vec2D> fournir_coups(Vec2D const& position, bool const& trait){
 							//	On construit une grille avec la tuile supplementaire et on la stocke.
 
                             grilleActuelle[i][j] = n;
-                            liste_coups.push_back(grilleActuelle);
+                            liste_coups.push_back(std::pair<Vec2D, std::string>(grilleActuelle, "o"));
                         }
 
 						grilleActuelle[i][j] = 0;	//	On remet la grille dans son etat initial.

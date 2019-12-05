@@ -17,6 +17,8 @@ int main()
 {	
 	unsigned int const seed = static_cast<unsigned int>(std::time(nullptr));
 	std::default_random_engine rd {seed};	//Pseudo-random number generator.
+	std::vector<std::pair<Vec2D, std::string>> futureGrids;
+	Vec2D actualGrid;
 
 	int size {4};
 
@@ -29,17 +31,27 @@ int main()
 	Vec2D myVec (table);
 	Vec2D id = Vec2D::eye();
 
-	myVec.display();
-	(id/myVec).display();
-	myVec.display();
+	//myVec.display();
+	//(id/myVec).display();
+	//myVec.display();
 
 
 	GameManager Game {rd, size};
-	while (!Game.isOver()){
+	/*while (!Game.isOver()){
 		Game.display();
 		std::cin>>input;
 		Game.move(input);
+	}*/
+
+	while (!Game.isOver()) {
+		Game.display();
+		actualGrid = Game.getGrid();
+
+		futureGrids = fournir_coups(actualGrid, true);
+
+
 	}
+
 
 	return EXIT_SUCCESS;
 }
