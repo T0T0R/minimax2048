@@ -13,12 +13,12 @@
 
 
 Vec2D rot90(Vec2D const& M){
-	/***	Clockwise rotation at 90 degrees.	***/
+	/***	Anti-clockwise rotation at 90 degrees.	***/
 	Vec2D rotatedArray{};
 
 	for (unsigned int i{0}; i<4; i++){
 		for (unsigned int j{0}; j<4; j++){
-			rotatedArray[j][3-i] = M[i][j];
+			rotatedArray[3-j][i] = M[i][j];
 		}
 	}
 
@@ -46,8 +46,8 @@ Vec2D glisse(Vec2D const& position, std::string const& fleche){
     int scanner;
 
     for (unsigned int j{0}; j<4; ++j){
-        for (unsigned int i{2}; i>0; --i){//	Position initiale (dans les trois lignes du haut).
-
+        for (int i{2}; i>=0; --i){//	Position initiale (dans les trois lignes du haut).
+            std::cout<<i<<std::endl;
             if (M[i][j] != 0){	//	Si il y a une tuile?
                 
 				scanner = i;
