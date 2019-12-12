@@ -143,22 +143,22 @@ Position GameManager::getVector(int direction) const {
 		{3 , Position {0, -1}}   // Left
 	};
 
-	switch (direction){
-		case 0:
-			std::cout<< "Up"<<std::endl;
-			break;
-		case 1:
-			std::cout<< "Right"<<std::endl;
-			break;
-		case 2:
-			std::cout<< "Down"<<std::endl;
-			break;
-		case 3:
-			std::cout<< "Left"<<std::endl;
-			break;
-		default:
-			break;
-	}
+	//switch (direction){
+	//	case 0:
+	//		std::cout<< "Up"<<std::endl;
+	//		break;
+	//	case 1:
+	//		std::cout<< "Right"<<std::endl;
+	//		break;
+	//	case 2:
+	//		std::cout<< "Down"<<std::endl;
+	//		break;
+	//	case 3:
+	//		std::cout<< "Left"<<std::endl;
+	//		break;
+	//	default:
+	//		break;
+	//}
 
 	return map.at(direction);
 }

@@ -86,6 +86,12 @@ Vec2D glisse(Vec2D const& position, std::string const& fleche){
 
 
 int fournir_note(Vec2D table){
+    int sum {0};
+    for (int i{0}; i<4; i++){
+        for (auto n: table[i])
+            sum += n;
+    }
+
 	return table[0][0];
     /* Returns the mark corresponding to the given grid. */
    /// Sum of :

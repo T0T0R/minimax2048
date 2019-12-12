@@ -6,6 +6,7 @@
 #include "../resources/provided.h"
 #include "./minimax.h"
 
+
 int minimax(Vec2D const& grid, int depth, bool isPlayer){
     /* Returns the mark corresponding to the given grid, with depth of
         several other grids. */
@@ -23,6 +24,8 @@ int minimax(Vec2D const& grid, int depth, bool isPlayer){
         for (std::pair<Vec2D,std::string> child: possibleMoves){   // Stores all marks for child grids.
                 marks.push_back( minimax( child.first, depth-1, !isPlayer ));
         }
+
+        if(possibleMoves.size()==0){return 1;}  // If no mvt is possible, exit with the lowest mark possible.
 
 
         if (isPlayer){  // Computes corresponding mark of grid, depending on the player.
