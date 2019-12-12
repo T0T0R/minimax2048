@@ -46,9 +46,9 @@ Vec2D glisse(Vec2D const& position, std::string const& fleche){
     int scanner;
 
     for (unsigned int j{0}; j<4; ++j){
+        imax = 3;
         for (int i{2}; i>=0; --i){//	Position initiale (dans les trois lignes du haut).
-            std::cout<<i<<std::endl;
-            if (M[i][j] != 0){	//	Si il y a une tuile?
+            if (M[i][j] != 0){	//	Si il y a une tuile ?
                 
 				scanner = i;
                 while (scanner < imax){	//	on regarde s il y a une tuile compatible en dessous.
@@ -86,7 +86,15 @@ Vec2D glisse(Vec2D const& position, std::string const& fleche){
 
 
 int fournir_note(Vec2D table){
-	return 0;
+	return table[0][0];
+    /* Returns the mark corresponding to the given grid. */
+   /// Sum of :
+   //  - Sum of all tiles,
+   //  - Bonus : if the highest tile is in the corner,
+   //  - Bonus : if both highest tile and second to highest tile are next to each other,
+   //  - Bonus : value/tile (favor |0|1024| against |512|512|)
+
+   //return EXIT_SUCCESS;
 }
 
 

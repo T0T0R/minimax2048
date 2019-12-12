@@ -60,20 +60,31 @@ int main()
 	Vec2D actualGrid;
 
 	int size {4};
-	int const DEPTH {5};
+	int const DEPTH {0};
 
-	int input;
-
-	std::array<int,4> line {1,0,0,4};
-	std::array<std::array<int, 4>, 4> table;
-	table.fill(line);
+	std::array<int, 4> lineA {4,0,0,0};
+	std::array<int, 4> lineB {0,0,0,0};
+	std::array<int, 4> lineC {0,4,0,0};
+	std::array<int, 4> lineD {2,0,0,0};
+	std::array<std::array<int, 4>, 4> table {lineA, lineB, lineC, lineD};
+	//table.fill(line);
 
 	Vec2D myVec (table);
 	Vec2D id = Vec2D::eye();
 
-	myVec.display();
-	//(id/myVec).display();
-	glisse(myVec,"g").display();
+	//myVec.display();
+
+	//std::cout<<std::endl;
+	//glisse(myVec, "h").display();
+
+	//std::cout<<std::endl;
+	//glisse(myVec, "b").display();
+
+	//std::cout<<std::endl;
+	//glisse(myVec, "g").display();
+
+	//std::cout<<std::endl;
+	//glisse(myVec, "d").display();
 
 
 	GameManager Game {rd, size};
@@ -85,6 +96,7 @@ int main()
 
 	while (!Game.isOver()) {
 		std::cout<<"==============="<<std::endl;
+		marks.clear();
 		Game.display();
 		std::cout<<std::endl;
 		actualGrid = Game.getGrid();
@@ -94,9 +106,11 @@ int main()
 		for (std::pair<Vec2D, std::string> grid: futureGrids){
 			marks.push_back(minimax(grid.first, DEPTH, true));
 			grid.first.display();
-			std::cout<<grid.second<<std::endl;
+			std::cout<<grid.second<<"\t"<<fournir_note(grid.first)<<std::endl;
+			std::cout<<std::endl;
 		}
-
+		std::cout<<std::endl;
+		std::cout<<bestMove(futureGrids, marks)<<std::endl;
 		Game.move(movementConv(bestMove(futureGrids, marks)));
 
 	}

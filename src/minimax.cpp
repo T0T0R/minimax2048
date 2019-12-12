@@ -14,7 +14,7 @@ int minimax(Vec2D const& grid, int depth, bool isPlayer){
 	std::vector<int> marks {};
 
     if (depth == 0){    // Base case.
-        globalMark = note(grid);
+        globalMark = fournir_note(grid);
 
     } else {    // Recursive case.
 
@@ -33,17 +33,4 @@ int minimax(Vec2D const& grid, int depth, bool isPlayer){
 
     }
     return globalMark;
-}
-
-
-int note(Vec2D const& grid){
-    return grid[0][0];
-    /* Returns the mark corresponding to the given grid. */
-    /// Sum of :
-    //  - Sum of all tiles,
-    //  - Bonus : if the highest tile is in the corner,
-    //  - Bonus : if both highest tile and second to highest tile are next to each other,
-    //  - Bonus : value/tile (favor |0|1024| against |512|512|)
-
-    //return EXIT_SUCCESS;
 }
