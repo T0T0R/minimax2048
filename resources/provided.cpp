@@ -42,7 +42,7 @@ Vec2D glisse(Vec2D const& position, std::string const& fleche){
         M = rot90(rot90(rot90(M)));
     }
 
-	int imax{3};
+	int imax;
     int scanner;
 
     for (unsigned int j{0}; j<4; ++j){
@@ -139,7 +139,7 @@ std::vector<std::pair<Vec2D, std::string>> fournir_coups(Vec2D const& position, 
 
                 coup = glisse(position,fleche);
 
-				if ( !isInside(liste_coups, coup)){
+				if ( !isInside(liste_coups, coup) && coup!=grilleActuelle){
 					liste_coups.push_back(std::pair<Vec2D, std::string>(coup, fleche));
 				}
             }
