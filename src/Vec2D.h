@@ -34,6 +34,7 @@ public:
 		
 
 	friend bool operator == (Vec2D const& vecA, Vec2D const& vecB);
+	friend bool operator != (Vec2D const& vecA, Vec2D const& vecB);
 	friend Vec2D operator +(Vec2D vA, Vec2D const& vB);
 		template <typename Tcoeff>
 	friend Vec2D operator * (Vec2D vA, Tcoeff const& lambda) {

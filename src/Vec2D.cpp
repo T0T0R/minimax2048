@@ -82,6 +82,9 @@ Vec2D& Vec2D::operator+=(Vec2D const& other) {
 bool operator==(Vec2D const & vecA, Vec2D const & vecB) {
 	return vecA.m_table == vecB.m_table;
 }
+bool operator!=(Vec2D const& vecA, Vec2D const& vecB) {
+	return !(vecA == vecB);
+}
 
 Vec2D operator+(Vec2D vA, Vec2D const& vB){
 	vA += vB; // reuse compound assignment.
