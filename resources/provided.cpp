@@ -138,24 +138,13 @@ int fournir_note(Vec2D table){
         mark *= 0.25;
     }
 
-    
-    
-/*    if(max>256)
-    std::cout<<"markeBefore:"<<mark<<"\t evalNeigh:"<<evalNeighbors(table, maxPos.y, maxPos.x, max)<<std::endl;
-    */mark *= evalNeighbors(table, maxPos.y, maxPos.x, max)-1;
+
+    //  - Bonus : if both highest tile and second to highest tile are next to each other,
+    mark *= evalNeighbors(table, maxPos.y, maxPos.x, max)-1;
 
 
-
-
-
-
-	return (mark+corrMean)*(nbZeros+1);
-    //return nbZeros+1;   
-   
-   //  - Bonus : if both highest tile and second to highest tile are next to each other,
-   //  - Bonus : value/tile (favor |0|1024| against |512|512|)
-
-   //return EXIT_SUCCESS;
+    //  - Bonus : value/tile (favor |0|1024| against |512|512|)
+	return (mark+corrMean)*(nbZeros+1);  
 }
 
 
