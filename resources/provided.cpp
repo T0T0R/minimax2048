@@ -86,21 +86,91 @@ Vec2D glisse(Vec2D const& position, std::string const& fleche){
 
 
 int fournir_note(Vec2D table){
-    int sum {0};
+    /* Returns the evaluated mark corresponding to the given grid. */
+
+    int mark {0};
+    int max {0};
+    std::vector<int> values (16);
+    Position maxPos{-1,-1};
+    int nbZeros {0};
+
+
+    int sum {0};    //  - Sum of all tiles, and search the position of the highest tile
     for (int i{0}; i<4; i++){
-        for (auto n: table[i])
-            sum += n;
+        for (int j{0}; j<4; j++){
+
+            sum += table[i][j];
+            values.push_back(table[i][j]);
+
+            if(table[i][j] > max){
+                max = table[i][j];
+                maxPos.x = j ; maxPos.y = i;
+            }
+            if(table[i][j]==0){
+                nbZeros++;
+            }
+
+        }
     }
 
-	return table[0][0];
-    /* Returns the mark corresponding to the given grid. */
-   /// Sum of :
-   //  - Sum of all tiles,
-   //  - Bonus : if the highest tile is in the corner,
+    mark = max;
+
+
+    /* STATISTICS */
+    double mean = sum/16;
+    double corrMean = sum/(16-nbZeros);
+    double variance;
+    int sumSquareDiff {0};
+    for (int i {0}; i<16;i++) {
+        sumSquareDiff += (mean - values[i])*(mean - values[i]);
+    }
+    variance = sumSquareDiff/16;
+
+
+
+
+    
+    if(table[0][0]==max || table[3][0]==max || table[0][3]==max || table[3][3]==max){  //  - Bonus : if the highest tile is in the corner,
+        mark *= 1.7;
+    }
+
+    if (table[2][2]==max || table[1][2]==max || table[1][1]==max || table[2][1]==max) {  //  - Bonus : if the highest tile is in the corner,
+        mark *= 0.25;
+    }
+
+    
+    
+/*    if(max>256)
+    std::cout<<"markeBefore:"<<mark<<"\t evalNeigh:"<<evalNeighbors(table, maxPos.y, maxPos.x, max)<<std::endl;
+    */mark *= evalNeighbors(table, maxPos.y, maxPos.x, max)-1;
+
+
+
+
+
+
+	return (mark+corrMean)*(nbZeros+1);
+    //return nbZeros+1;   
+   
    //  - Bonus : if both highest tile and second to highest tile are next to each other,
    //  - Bonus : value/tile (favor |0|1024| against |512|512|)
 
    //return EXIT_SUCCESS;
+}
+
+
+int evalNeighbors(Vec2D const& table, int const i, int const j, int const childValue){
+    if(childValue>1 && i<4 && j<4 && i>=0 && j>= 0 && table[i][j]==childValue){    // If the position is in the grid
+
+        double alpha = 1;
+        return alpha
+            + evalNeighbors(table, i+1, j, childValue/2)
+            + evalNeighbors(table, i, j+1, childValue/2)
+            + evalNeighbors(table, i-1, j, childValue/2)
+            + evalNeighbors(table, i, j-1, childValue/2);
+    }else{
+        return 0;
+    }
 }
 
 

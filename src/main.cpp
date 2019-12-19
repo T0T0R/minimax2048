@@ -36,7 +36,7 @@ int movementConv(std::string direction) {
 		{"d", 1 },  // Right
 		{"b", 2},  // Down
 		{"g",3},   // Left
-		{"o", 4}
+		{"o", -1}
 	};
 	int inter = conv.at(direction);
 	return inter;
@@ -60,17 +60,20 @@ int main()
 	Vec2D actualGrid;
 
 	int size {4};
-	int const DEPTH {2};
+	int const DEPTH {5};
 
-	std::array<int, 4> lineA {4,0,0,0};
+	std::array<int, 4> lineA {2,0,0,0};
 	std::array<int, 4> lineB {0,0,0,0};
-	std::array<int, 4> lineC {0,4,0,0};
-	std::array<int, 4> lineD {2,0,0,0};
+	std::array<int, 4> lineC {0,8,0,0};
+	std::array<int, 4> lineD {2,4,0,0};
 	std::array<std::array<int, 4>, 4> table {lineA, lineB, lineC, lineD};
 
 
 	Vec2D myVec (table);
 	Vec2D id = Vec2D::eye();
+
+	std::cout<<evalNeighbors(myVec, 2,1,8)<<std::endl;
+
 
 
 	GameManager Game {rd, size};
