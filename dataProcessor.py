@@ -42,6 +42,3 @@ MyFile.write("n,")
 for i in range(maxlength-1):
     MyFile.write(str(i)+",")
 MyFile.close()
-
-
-MyFile = open("./percCorner.csv", "a");

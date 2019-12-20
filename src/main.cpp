@@ -110,24 +110,11 @@ int main()
 	Vec2D actualGrid;
 
 	int size {4};
-	int const DEPTH {0};
-
-	std::array<int, 4> lineA {2,0,0,0};
-	std::array<int, 4> lineB {0,0,0,0};
-	std::array<int, 4> lineC {0,0,0,0};
-	std::array<int, 4> lineD {2,0,0,0};
-	std::array<std::array<int, 4>, 4> table {lineA, lineB, lineC, lineD};
-
-
-	Vec2D myVec (table);
-	Vec2D id = Vec2D::eye();
-
-	//std::cout<<(float)giveSum(table)/(float)(16-giveNbZeros(table))<<std::endl;
+	int const DEPTH {1};
 
 
 	GameManager Game {rd, size};
 	
-
 	std::ofstream fileNbZeros("nbZeros.csv");
 	std::ofstream fileMaxValue("maxValue.csv");
 	std::ofstream fileMean("mean.csv");
@@ -144,10 +131,10 @@ int main()
 		int nbMaxInCorner {0};
 
 
-		while (!Game.isOver()) {
-			//std::cout<<"==============="<<std::endl;
+		while (!Game.isOver() && !Game.getWon()) {
+			std::cout<<"==============="<<std::endl;
 			marks.clear();
-			//Game.display();
+			Game.display();
 			
 			actualGrid = Game.getGrid();
 
@@ -161,17 +148,14 @@ int main()
 						 
 			for (std::pair<Vec2D, std::string> grid: futureGrids){
 				marks.push_back(minimax(grid.first, DEPTH, true));
-				/*grid.first.display();
-				std::cout<<grid.second<<"\t"<<fournir_note(grid.first)<<std::endl;
-				std::cout<<std::endl;*/
 			}
-			//std::cout<<std::endl;
-			//std::cout<<bestMove(futureGrids, marks)<<std::endl;
 			Game.move(movementConv(bestMove(futureGrids, marks)));
 
 			lapNo++;
-
+			if (Game.getWon())std::cout<<"******* 2048 !pre";
 		}
+
+		if(Game.getWon())std::cout<<"******* 2048 !";
 		fileNbZeros<<std::endl;
 		fileMaxValue<<std::endl;
 		fileMean<<std::endl;

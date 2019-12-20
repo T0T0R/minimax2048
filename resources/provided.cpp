@@ -140,7 +140,7 @@ int fournir_note(Vec2D table){
 
 
     //  - Bonus : if both highest tile and second to highest tile are next to each other,
-    mark *= evalNeighbors(table, maxPos.y, maxPos.x, max)-1;
+    mark *= evalNeighbors(table, maxPos.y, maxPos.x, max);
 
 
     //  - Bonus : value/tile (favor |0|1024| against |512|512|)

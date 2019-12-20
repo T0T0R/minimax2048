@@ -133,7 +133,7 @@ Cette fonction retourne \verb|liste_coups|, un tableau de grilles correspondant 
 \item on vérifie que la note attribuée à la grille actuelle \verb|grilleActuelle| soit positive,
 \item les différents mouvements sont stockés dans \verb|directions| et les valeurs possibles d'une tuile insérée sont stockées dans \verb|valeursTuile|,
 \item dans le cas d'un déplacement des tuiles, on stocke successivement dans \verb|liste_coups| chacune des quatre grilles possibles après un déplacement en vérifiant qu'elle ne soit pas déjà présente dans le tableau,
-\item dans le cas d'une insertion de tuile, chaque case vide de la grille actuelle est évaluée parmi ses valeurs possibles. Les grilles obtenues sont ajoutées à \verb|liste_coups|.
+\item dans le cas d'une insertion de tuile, chaque case vide de la grille actuelle est évaluée parmi ses valeurs possibles. Les couples (grille obtenue, direction qui a généré cette grille) sont ajoutées à \verb|liste_coups|.
 \item Finalement, le tableau de grilles possibles \verb|liste_coups| est retourné.
 \end{enumerate}
 
@@ -249,6 +249,7 @@ Il s'agit formellement d'un objet \verb|std::array<std::array<int,4>,4>|.
 Plusieurs opérateurs sont surchargés:
 \begin{itemize}
 \item == : Permet la comparaison de deux matrices (A==B)
+\item != : Permet la comparaison de deux matrices (A!=B)
 \item + : Permet l'addition de deux matrices (A+B)
 \item * : Permet la multiplication d'une matrice par un coefficient (k*A ou A*k)
 \item / : Permet le produit matriciel de deux matrices (A/B)
@@ -260,6 +261,168 @@ Il existe la méthode \verb|eye| pour générer une matrice identité 4$\times$4
 \lstinputlisting[style=customc, caption={Vec2D.h}]{./src/Vec2D.h}
 
 
+\section{Algorithme MinMax}
+\subsection{Code de l'algorithme}
+
+\lstinputlisting[style=customc, caption={minimax.cpp}]{./src/minimax.cpp}
+\lstinputlisting[style=customc, caption={minimax.h}]{./src/minimax.h}
+
+\paragraph{fonction fournir\_note}
+Afin de pouvoir réaliser un algorithme MinMax, il est nécessaire de définir les critères permettant de définir ce que l’ordinateur doit considérer comme étant une \og{}bonne\fg{}grille.
+Les critères ayant été considérés sont, sans ordre d’importance particulier :
+\begin{itemize}
+\item la somme de toutes les cases du tableau (remplacé),
+\item la valeur de la tuile maximale,
+\item le positionnement des tuiles de valeur maximale,
+\item la présence d’une chaîne de voisins de plus en plus petits en partant des tuiles ayant une valeur maximale,
+\item le nombre de zéros dans la grille,
+\item la moyenne des valeurs dans la grille, cases vides comprises (remplacé),
+\item la moyenne des valeurs de toutes les tuiles, en omettant les cases vides.
+\end{itemize}
+
+Afin d'évaluer les effets des différents paramètres sur le comportement de l'algorithme, on représentera l'évolution temporelles de grandeurs caractéristiques perceptibles (telles que la valeur de la tuile maximale, le nombre de cases vides...). Pour que ces graphiques soient représentatifs, on représentera en réalité l'évolution \emph{moyenne} d'une grille - moyenne calculée à partir de l'évolution de 1000 grilles.
+
+\subsection{Critères d’attribution de note abandonnés}
+\paragraph{Somme et moyenne des cases du tableau :}
+Ces critères effectuaient la somme et la moyenne des cases du tableau. Ceux-ci ont été abandonnés, car complètement inutiles, étant donné que la somme et la moyenne augmente selon une droite le long de la partie. En effet, à chaque coup on ajoutera toujours une valeur de 2 ou de 4 à la grille (avec une probabilité de 0,9 et de 0,1 respectivement). Le niveau d’intelligence du joueur ne pourra jamais influer sur ce paramètre fixe, il n’est donc pas nécessaire de mesurer une somme ou une moyenne pure sur toutes les cases de la grille.
+
+
+
+\begin{wrapfigure}[16]{r}{9cm}
+\includegraphics[scale=0.4]{./images/moyenneDroite.png}
+\end{wrapfigure}
+
+Équation de la droite:
+\[\text{Moyenne} = \cfrac{1}{16}\left(2,2\times \text{coups} + 4,4\right)\]
+\[\text{Moyenne} = 0.1375\times \text{coups}+0.275\]
+
+On obtient un écart relatif de $\cfrac{1496-1375}{1375} = 8,8\%$ pour la pente, et de $\cfrac{3003-2750}{2750} = 9,2\%$ pour l'ordonnée à l'origine.
+
+
+\subsection{Critères d’attribution de note actuels}
+\paragraph{Valeur de la tuile maximale :}
+Le but principal du jeu étant d’obtenir la tuile valant 2048, nous avons donc considéré comme l’un des critères centraux de l’attribution de la note la valeur de la tuile maximale, afin de favoriser l’apparition de la tuile valant 2048.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.3]{./images/depth.png}
+\end{center}
+\caption{Évolution de la valeur maximale, avec agrandissements}
+\end{figure}
+
+On remarque que plus la profondeur D augmente, plus les valeurs les plus hautes sont atteintes rapidement. Au fur-et-à-mesure de l'évolution de la partie, on constate une augmentation du bruit. Ceci est dû au fait qu'il y a moins de parties qui vont jusqu'à 500 coups, et plus qui vont jusqu'à 200 coups. Ces courbes représentant des moyennes, et les tuiles ne pouvant prendre que des  valeurs discrètes, l'impression de continuité des valeurs disparaît aux temps élevés.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.5]{./images/dureeD.png}
+\end{center}
+\caption{Distribution de la durée des parties}
+\end{figure}
+
+\paragraph{Positionnement de la tuile de valeur maximale (critère P):}
+
+Après de nombreuses parties réalisées à la main, il a été déterminé comme stratégie efficace de garder le plus possible la tuile ayant la valeur maximale dans l’un des coins de la grille (zones vertes sur la figure ci-contre), et d’éviter à tout prix d’avoir la tuile de valeur maximale au centre de la grille (zones rouges sur la figure ci-contre). Il a donc été décidé d’attribuer une note 1,7 fois plus élevée pour une grille comprenant la tuile de valeur maximale dans l’une des cases vertes, et une note 0,25 fois plus basse pour les grilles possédant la tuile de valeur maximale dans une case rouge. Les valeurs ont été posées de manière purement arbitraire.
+\newpage
+
+\begin{figure}[h!]
+\null\hfill
+\subfigure[Facteurs]{\includegraphics[scale=0.5]{./images/schemaPts.png}}
+\hfill
+\subfigure[Efficacité]{\includegraphics[scale=0.5]{./images/dureeP.png}}
+\hfill\null
+\end{figure}
+
+Le graphe ci-contre présente le pourcentage de temps durant lequel la tuile de valeur maximale se situait dans l’un des coins de la grille.P1 favorise uniquement le positionnement dans les coins. P2 défavorise également le positionnement au centre. On remarque que pour améliorer la durée d’une partie, une profondeur de 1 n’est pas suffisante, et que le critère P2 est meilleur que le critère P1.
+
+Un autre point jouant en la faveur de P2 est le pourcentage de coups où l’une des tuiles les plus élevées se situait effectivement dans un coin. Bien que ne faire que favoriser les grilles ayant une telle configuration augmente le temps passé dans un coin, défavoriser le positionnement d’une tuile en position centrale augmente également l’efficacité de ce critère.
+
+
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.5]{./images/coinP.png}
+\end{center}
+\end{figure}
+
+
+\paragraph{Présence d’une chaîne de voisins de plus en plus petits en partant des tuiles ayant une valeur maximale (critère N) :}
+Dans une partie, afin d’anticiper les créations de tuiles de haute valeur, il peut être bon de favoriser les tuiles où l’on peut trouver une chaîne de voisins dont la valeur décroît de division par 2 en division par 2, en partant des tuiles ayant la valeur la plus haute (ex : une chaîne où l’on trouverait 256-128-64-32, par exemple). Ce comportement permet de faciliter l’apparition de tuiles de plus haute valeur en préparant leur apparition, et minimiser le nombre de mouvements à effectuer afin de les obtenir. La fonction permettant de rechercher les voisins est récursive.
+
+Deux méthodes ont été employées pour l’attribution des points : l’une d’entre-elles consiste à considérer que la valeur de la chaîne dépend uniquement de sa longueur (la note associée sera égale au nombre de voisins), et la seconde consiste à ajouter la valeur des voisins (256-128-64-32 ajouterait, par exemple, 128 + 64 + 32 = 224 points), dans le but de favoriser les chaînes ayant les valeurs les plus élevées. La différence d’attribution de points permet de donner plus ou moins de valeur à ce critère.
+
+Dans le graphe ci-contre, on étudie la durée d’une partie selon les différents critères de voisinage : N1 indique l’utilisation du critère avec un ajout d’une valeur variant selon la valeur du voisin, N2 indique l’utilisation du critère avec un ajout fixe, l’absence de paramètre en N traduit l’absence du critère.
+On remarque que l’attribution des points selon le paramètre N1 semble donner des parties en moyenne légèrement plus longues que sans critère, tandis que le critère N2 réduit légèrement la durée moyenne des parties.
+
+\begin{figure}[h!]
+\null\hfill
+\subfigure{\includegraphics[scale=0.5]{./images/dureeN.png}}
+\hfill
+\subfigure{\includegraphics[scale=0.5]{./images/maxN.png}}
+\hfill\null
+\end{figure}
+
+On remarque également que le critère N1 semble donner des valeurs plus hautes et plus rapidement que le critère N2.
+
+De plus, il semblerait que le critère N2 surpasse le critère du coin (critère P), pourtant jugé plus important. Au contraire de N1, bien qu’amenuisant le poids de P, semble pourtant lui laisser une importance particulière.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.4]{./images/coinNP.png}
+\end{center}
+\end{figure}
+
+\newpage
+\paragraph{Nombre de zéros dans la grille (critère anti-X):}
+
+\begin{wrapfigure}[24]{r}{10cm}
+\includegraphics[scale=0.5]{./images/zerosD.png}
+\end{wrapfigure}
+Ce critère a été considéré comme étant le plus important dans le programme. En effet, plus le nombre de zéros est faible, plus la partie peut durer longtemps, et plus on a de chances d’atteindre la tuile valant 2048. Ce critère est donc un multiplicateur du score calculé précédemment.
+
+On peut voir ci-contre le graphe indiquant le nombre de zéros moyen pour chaque coup pour différentes profondeurs.
+On remarque que les profondeurs D1, D2, et D3 semblent donner les meilleurs résultats au niveau du nombre de zéros. Les « vagues » observées dans le graphe ont leurs pics qui correspondent au moment moyen ou l’on observe une nouvelle valeur maximale. En effet, pour former une nouvelle valeur maximale, on doit réaliser une grande chaîne, causant ainsi une grande libération de place. On peut étayer cette hypothèse : l'écart entre chaque creux double à chaque nouveau creux. Ce phénomène peut s'expliquer par le fait que, s'il a fallu $n_i$ coups pour former la première tuile de valeur $a_i$ en combinant une grande partie des tuiles déjà présentes, il faudra encore $n_i$ coups pour former une deuxième tuile de valeur $a_i$ qui pourra se combiner avec la première. On a ainsi doublement du nombre de coups avant l'apparition de la tuile de plus grande valeur.
+
+Le critère X marquant une partie où l’on ne considère que la valeur maximale de la grille, sans regarder le nombre de zéros, on remarque immédiatement que le but recherché d’allonger la durée d’une partie est très bien rempli, permettant ainsi d’avoir de bien meilleures chances d’obtenir un meilleur score final.
+
+\begin{figure}[h!]
+\null\hfill
+\subfigure{\includegraphics[scale=0.5]{./images/dureeX.png}}
+\hfill
+\subfigure{\includegraphics[scale=0.5]{./images/maxX.png}}
+\hfill\null
+\end{figure}
+
+On confirme d’un même temps que favoriser la longueur d’une partie permet d’obtenir des valeurs plus élevées, et ainsi favoriser la formation d’une tuile 2048.
+
+
+
+
+\paragraph{Moyenne corrigée (critère M):}
+
+Au cours des différents tests, il a été remarqué que, bien que le programme puisse faire des chaînes longues permettant de créer des cases de haute valeur, il avait du mal à réellement créer ces valeurs élevées. On s'est attaché à construire une nouvelle valeur faisant la moyenne de toutes les tuiles, à l'exception des zéros. En attribuant en bonus cette \emph{moyenne corrigée}, on souhaite pousser le programme à créer des tuiles de plus haute valeur que celle déjà présente.
+
+On remarque une nouvelle fois que la moyenne corrigée et optimale pour une profondeur de 2, qui permet ainsi de favoriser la formation de tuiles hautes, lors de l’action de tous les critères en simultané.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.4]{./images/cmeanD.png}
+\end{center}
+\end{figure}
+
+On remarque que l’instauration du critère de la moyenne corrigée permet d’allonger le temps de partie, et dans le cas où le nombre de zéros est également un critère mis en place, on remarque que les valeurs basses remontent légèrement (décalage du premier quartile), améliorant donc l’efficacité du critère du nombre de zéros. Cela est lié au fait que le critère pousse l’algorithme à rassembler les tuiles afin de créer des tuiles de haute valeur.
+
+\begin{figure}[h!]
+\null\hfill
+\subfigure{\includegraphics[scale=0.4]{./images/dureeM.png}}
+\hfill
+\subfigure{\includegraphics[scale=0.4]{./images/maxM.png}}
+\hfill\null
+\end{figure}
+
+Cette tendance est confirmée avec le graphe ci-contre. En plus d’atteindre des valeurs plus hautes grâce à la durée de jeu allongée, ces valeurs sont atteintes bien plus rapidement (comparaison sur les valeurs maximales allant de 2 à 256, par manque de données pour les critères D3-X et D1-X) 
+
+\section{Code de fournir\_note}
+\lstinputlisting[style=customc, caption={Extrait de provided.cpp}]{./resources/fournir_note.cpp}
 
 
 
@@ -267,8 +430,62 @@ Il existe la méthode \verb|eye| pour générer une matrice identité 4$\times$4
 
 
 
+\chapter{Les limites de l’algorithme MinMax}
+\paragraph{Le 2048, un jeu à somme nulle ?}
+Dans la théorie, l’algorithme MinMax est un algorithme fonctionnant mieux sur des jeux à somme nulle, c’est-à-dire un jeu où augmenter le score d’un joueur diminue celui de l’autre d'une même valeur. En considérant que le 2048 est un jeu opposant le joueur contre une entité distribuant aléatoirement une nouvelle tuile sur le plateau de jeu à chaque coup, on remarque que le score du joueur augmente justement avec tout coup grâce à la tuile ajoutée par cette entité aléatoire. De plus, les nouvelles tuiles étant placées aléatoirement, le placement de celles-ci peuvent être tout aussi avantageuses pour le joueur que désavantageuses, n’en faisant pas réellement un jeu à somme nulle, et par conséquent, rendant l’usage de l’algorithme moins pertinent.
+\paragraph{Prédire l’aléatoire, une limite du MinMax}
+Comme explicité précédemment, l'opposant du joueur peut être considéré comme une entité distribuant aléatoirement les cases, et ne choisissant donc pas le positionnement des tuiles de manière à défavoriser au maximum le joueur. Cependant, le principe du MinMax repose sur le fait que l’adversaire choisira toujours la possibilité la plus défavorable au joueur. L’algorithme pense donc toujours agir dans le pire des cas pour lui, et ainsi prédire le pire des cas à une profondeur $N$. Cependant, le coup effectué par l’adversaire est entièrement déterminé par le hasard, et sa prédiction colle donc peu à la réalité des coups qui suivront. Plus$ N$ est grand, plus cet écart entre la prédiction et la réalité s’agrandit, expliquant ainsi pourquoi une profondeur de 4 ou 5 semble bien moins efficace qu’une profondeur de 2 ou 3.
 
 
+
+\appendix
+\chapter{Graphiques}
+On rappelle les critères:
+\begin{itemize}
+\item D (Depth) : Profondeur,
+\item P1 (Position) : Les coins sont favorisés,
+\item P2 (Position) : Les coins sont favorisés et le centre est défavorisé,
+\item N1 (Neighbor) : La valeur de la chaîne de voisins dépend de la valeur des voisins,
+\item N2 (Neighbor) : La valeur de la chaîne de voisins dépend uniquement de sa longueur,
+\item Les zéros sont par défaut pris en compte. X signifie qu'on a écarté les zéros du calcul
+\end{itemize}
+
+Le code complet est disponible à l'adresse \url{https://github.com/T0T0R/minimax2048} sous licence MIT.
+
+\newpage
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.9]{./cleanDatas/Depths.png}
+\end{center}
+\end{figure}
+
+\newpage
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.9]{./cleanDatas/Mean.png}
+\end{center}
+\end{figure}
+
+\newpage
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.9]{./cleanDatas/Neighbors.png}
+\end{center}
+\end{figure}
+
+\newpage
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.9]{./cleanDatas/Position.png}
+\end{center}
+\end{figure}
+
+\newpage
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.9]{./cleanDatas/Zeros.png}
+\end{center}
+\end{figure}
 
 
 
